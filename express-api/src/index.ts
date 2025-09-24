@@ -1,20 +1,23 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import { pool } from "./database";
+
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Built-in middleware
 app.use(express.json());
 app.use(cors());
 
 // Routes
-app.get("/auth/register", (req, res) => {
+app.post("/auth/register", (req, res) => {
   res.json({ message: "Register" });
 });
 
-app.get("/auth/login", (req, res) => {
+app.post("/auth/login", (req, res) => {
   res.json({ message: "Login" });
 });
 
