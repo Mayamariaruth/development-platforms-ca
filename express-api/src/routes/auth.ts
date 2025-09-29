@@ -2,10 +2,10 @@ import express from "express";
 import { pool } from "../database.js";
 import type { ResultSetHeader } from "mysql2/promise";
 import type { User } from "../interfaces.js";
-import { validateAuthData } from "../middleware/validation.js";
+import { validate } from "../middleware/validation.js";
+import { registerSchema, loginSchema } from "../middleware/schemas.js";
 
 const router = express.Router();
-
 /**
  * @swagger
  * /auth/register:
@@ -18,19 +18,31 @@ const router = express.Router();
  *           schema:
  *             type: object
  *             required:
+ *               - username
  *               - email
  *               - password
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 example: johndoe
+ *               email:
+ *                 type: string
+ *                 example: john@example.com
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 example: Password123!
  *     responses:
  *       201:
  *         description: User created successfully
  *       400:
- *         description: Missing email or password
+ *         description: Validation failed
  *       409:
  *         description: Email already registered
  *       500:
  *         description: Server error
  */
-router.post("/register", validateAuthData, async (req, res) => {});
+router.post("/register", validate(registerSchema), async (req, res) => {});
 
 /**
  * @swagger
@@ -46,14 +58,22 @@ router.post("/register", validateAuthData, async (req, res) => {});
  *             required:
  *               - email
  *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: john@example.com
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 example: Password123!
  *     responses:
  *       200:
  *         description: Returns JWT
  *       400:
- *         description: Missing fields
+ *         description: Validation failed
  *       401:
  *         description: Invalid credentials
  */
-router.post("/login", validateAuthData, async (req, res) => {});
+router.post("/login", validate(loginSchema), async (req, res) => {});
 
 export default router;
