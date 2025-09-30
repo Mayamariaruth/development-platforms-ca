@@ -16,7 +16,7 @@ export interface Article {
   title: string;
   body: string;
   category: string;
-  user_id: number;
+  submitted_by: number;
   created_at?: Date;
 }
 

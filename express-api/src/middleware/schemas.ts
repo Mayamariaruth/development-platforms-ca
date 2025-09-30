@@ -27,3 +27,10 @@ export const loginSchema = z.object({
     .transform((val) => val.trim().toLowerCase()),
   password: z.string(),
 });
+
+// Create articles schema
+export const createArticleSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  body: z.string().min(1, "Body is required"),
+  category: z.string().min(1, "Category is required"),
+});

@@ -2,8 +2,8 @@ import express from "express";
 import type { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { pool } from "./database.js";
 import authRoutes from "./routes/auth.js";
+import articleRoutes from "./routes/articles.js";
 
 // Other imports
 import swaggerUi from "swagger-ui-express";
@@ -39,6 +39,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Routes
 app.use("/auth", authRoutes);
+app.use("/articles", articleRoutes);
 
 //Middleware
 // 404 handler - catches all unmatched routes
