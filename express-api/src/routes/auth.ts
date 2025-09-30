@@ -5,6 +5,7 @@ import type { ResultSetHeader } from "mysql2/promise";
 import type { User, UserResponse } from "../interfaces.js";
 import { validate } from "../middleware/validation.js";
 import { registerSchema, loginSchema } from "../middleware/schemas.js";
+import { generateToken } from "../utils/jwt.js";
 
 const router = Router();
 
