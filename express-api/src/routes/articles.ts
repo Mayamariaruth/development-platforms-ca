@@ -12,7 +12,39 @@ router.post(
   "/",
   authenticateToken,
   validate(createArticleSchema),
-  async (req, res) => {}
+  async (req, res) => {
+    try {
+      const { title, body, category } = req.body;
+      const userId = req.user!.id;
+
+      // Insert article into database
+      const [result]: [ResultSetHeader, any] = await pool.execute(
+        "INSERT INTO articles (title, body, category, submitted_by) VALUES (?, ?, ?, ?)",
+        [title, body, category, userId]
+      );
+
+      const article: Article = {
+        id: result.insertId,
+        title,
+        body,
+        category,
+        submitted_by: userId,
+        created_at: new Date(),
+      };
+
+      res.status(201).json({
+        success: true,
+        message: "Article submitted successfully",
+        data: article,
+      });
+    } catch (error) {
+      console.error("Article submission error:", error);
+      res.status(500).json({
+        success: false,
+        error: "Failed to submit article",
+      });
+    }
+  }
 );
 
 export default router;
