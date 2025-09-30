@@ -5,6 +5,12 @@ export interface User {
   password?: string;
 }
 
+export interface UserResponse {
+  id: number;
+  username: string;
+  email: string;
+}
+
 export interface Article {
   id: number;
   title: string;

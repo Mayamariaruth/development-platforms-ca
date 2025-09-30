@@ -1,11 +1,13 @@
-import express from "express";
+import { Router } from "express";
+import bcrypt from "bcrypt";
 import { pool } from "../database.js";
 import type { ResultSetHeader } from "mysql2/promise";
-import type { User } from "../interfaces.js";
+import type { User, UserResponse } from "../interfaces.js";
 import { validate } from "../middleware/validation.js";
 import { registerSchema, loginSchema } from "../middleware/schemas.js";
 
-const router = express.Router();
+const router = Router();
+
 /**
  * @swagger
  * /auth/register:
@@ -42,7 +44,53 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
-router.post("/register", validate(registerSchema), async (req, res) => {});
+router.post("/register", validate(registerSchema), async (req, res) => {
+  try {
+    const { username, email, password } = req.body;
+
+    // Check if user already exists
+    const [rows] = await pool.execute(
+      "SELECT * FROM users WHERE email = ? OR username = ?",
+      [email, username]
+    );
+    const existingUsers = rows as User[];
+
+    if (existingUsers.length > 0) {
+      return res.status(409).json({
+        error: "User with this email or username already exists",
+      });
+    }
+
+    // Hash the password using bcrypt
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    // Create the user in database
+    const [result]: [ResultSetHeader, any] = await pool.execute(
+      "INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)",
+      [username, email, hashedPassword]
+    );
+
+    // Return user info
+    const userResponse: UserResponse = {
+      id: result.insertId,
+      username,
+      email,
+    };
+
+    res.status(201).json({
+      success: true,
+      message: "User registered successfully",
+      data: userResponse,
+    });
+  } catch (error) {
+    console.error("Registration error:", error);
+    res.status(500).json({
+      success: false,
+      error: "Failed to register user",
+    });
+  }
+});
 
 /**
  * @swagger
