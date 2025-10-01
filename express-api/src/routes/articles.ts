@@ -8,6 +8,43 @@ import { createArticleSchema } from "../middleware/schemas.js";
 
 const router = Router();
 
+/**
+ * @swagger
+ * /articles:
+ *   post:
+ *     summary: Submit a new article
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - title
+ *               - body
+ *               - category
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 example: My first article
+ *               body:
+ *                 type: string
+ *                 example: This is the body of my article
+ *               category:
+ *                 type: string
+ *                 example: Tech
+ *     responses:
+ *       201:
+ *         description: Article created successfully
+ *       400:
+ *         description: Validation failed
+ *       401:
+ *         description: Unauthorized / missing token
+ *       500:
+ *         description: Server error
+ */
 router.post(
   "/",
   authenticateToken,
