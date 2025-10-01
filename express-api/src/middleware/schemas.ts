@@ -30,7 +30,16 @@ export const loginSchema = z.object({
 
 // Create articles schema
 export const createArticleSchema = z.object({
-  title: z.string().min(1, "Title is required"),
-  body: z.string().min(1, "Body is required"),
-  category: z.string().min(1, "Category is required"),
+  title: z
+    .string()
+    .min(1, "Title is required")
+    .max(255, "Title must not exceed 255 characters"),
+  body: z
+    .string()
+    .min(1, "Body is required")
+    .max(5000, "Body must not exceed 2000 characters"),
+  category: z
+    .string()
+    .min(1, "Category is required")
+    .max(100, "Category must not exceed 100 characters"),
 });

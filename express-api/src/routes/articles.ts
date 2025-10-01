@@ -117,9 +117,6 @@ router.post(
  *                       category:
  *                         type: string
  *                         example: Tech
- *                       submitted_by:
- *                         type: integer
- *                         example: 1
  *                       created_at:
  *                         type: string
  *                         format: date-time
@@ -132,8 +129,7 @@ router.post(
 router.get("/", async (req, res) => {
   try {
     const [rows] = await pool.execute(
-      `SELECT a.id, a.title, a.body, a.category, a.submitted_by, a.created_at,
-              u.username
+      `SELECT a.id, a.title, a.body, a.category, a.created_at, u.username
        FROM articles a
        JOIN users u ON a.submitted_by = u.id
        ORDER BY a.created_at DESC`
