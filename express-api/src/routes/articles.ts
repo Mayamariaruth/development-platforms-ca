@@ -84,4 +84,74 @@ router.post(
   }
 );
 
+/**
+ * @swagger
+ * /articles:
+ *   get:
+ *     summary: Get all articles
+ *     responses:
+ *       200:
+ *         description: List of articles
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                         example: 1
+ *                       title:
+ *                         type: string
+ *                         example: My first article
+ *                       body:
+ *                         type: string
+ *                         example: This is the body of my article
+ *                       category:
+ *                         type: string
+ *                         example: Tech
+ *                       submitted_by:
+ *                         type: integer
+ *                         example: 1
+ *                       created_at:
+ *                         type: string
+ *                         format: date-time
+ *                       username:
+ *                         type: string
+ *                         example: johndoe
+ *       500:
+ *         description: Server error
+ */
+router.get("/", async (req, res) => {
+  try {
+    const [rows] = await pool.execute(
+      `SELECT a.id, a.title, a.body, a.category, a.submitted_by, a.created_at,
+              u.username
+       FROM articles a
+       JOIN users u ON a.submitted_by = u.id
+       ORDER BY a.created_at DESC`
+    );
+
+    const articles = rows as ArticleWithUser[];
+
+    res.json({
+      success: true,
+      data: articles,
+    });
+  } catch (error) {
+    console.error("Fetch articles error:", error);
+    res.status(500).json({
+      success: false,
+      error: "Failed to fetch articles",
+    });
+  }
+});
+
 export default router;

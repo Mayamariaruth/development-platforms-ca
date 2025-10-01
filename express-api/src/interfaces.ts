@@ -22,5 +22,4 @@ export interface Article {
 
 export interface ArticleWithUser extends Article {
   username: string;
-  email: string;
 }
